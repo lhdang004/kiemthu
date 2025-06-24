@@ -1,0 +1,44 @@
+KiemThu/
+├── config/
+│   └── database.php
+├── modules/
+│   ├── giaovien/
+│   │   ├── index.php
+│   │   ├── them.php
+│   │   ├── sua.php
+│   │   └── xoa.php
+│   ├── bangcap/
+│   │   ├── index.php
+│   │   ├── sua.php
+│   │   └── xoa.php
+│   ├── khoa/
+│   │   ├── index.php
+│   │   ├── sua.php
+│   │   └── xoa.php
+│   ├── buoiday/
+│   │   ├── index.php
+│   │   ├── them.php
+│   │   ├── sua.php
+│   │   └── xoa.php
+│   ├── lichday/
+│   │   └── index.php
+│   ├── diemdanh/
+│   │   └── index.php
+│   ├── daybu/
+│   │   └── index.php
+│   ├── daythay/
+│   │   └── index.php
+│   ├── tinhluong/
+│   │   └── index.php
+│   ├── thanhtoan/
+│   │   └── index.php
+│   └── baocao/
+│       ├── gioday.php
+│       ├── taichinh.php
+│       └── thongke.php
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── scripts.js
+└── index.php
