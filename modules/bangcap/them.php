@@ -76,11 +76,7 @@ echo getHeader("Thêm Bằng cấp");
                         placeholder="VD: Cử nhân CNTT" required>
                 </div>
 
-                <div class="form-group col-md-6">
-                    <label for="he_so_luong"><i class="fas fa-money-bill mr-1"></i> Hệ số lương (VNĐ/giờ)</label>
-                    <input type="number" name="he_so_luong" id="he_so_luong" class="form-control" min="100000"
-                        step="50000" required>
-                </div>
+
 
                 <div class="form-group col-md-6">
                     <label for="he_so"><i class="fas fa-calculator mr-1"></i> Hệ số giảng dạy</label>

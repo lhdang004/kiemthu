@@ -15,13 +15,11 @@ $bangcap = $stmt->fetch(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "UPDATE bangcap SET 
             ten_bangcap = :ten_bangcap,
-            he_so_luong = :he_so_luong,
             he_so = :he_so 
             WHERE ma_bangcap = :ma_bangcap";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         ':ten_bangcap' => $_POST['ten_bangcap'],
-        ':he_so_luong' => $_POST['he_so_luong'],
         ':he_so' => $_POST['he_so'],
         ':ma_bangcap' => $id
     ]);
@@ -84,15 +82,7 @@ echo getHeader("Sửa Bằng cấp");
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="he_so_luong">
-                                <i class="fas fa-money-bill-wave mr-1"></i>
-                                Hệ số lương <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" step="0.01" id="he_so_luong" name="he_so_luong" class="form-control"
-                                value="<?= htmlspecialchars($bangcap['he_so_luong']) ?>" required>
-                            <div class="invalid-feedback">Vui lòng nhập hệ số lương</div>
-                        </div>
+
                         <div class="form-group col-md-6">
                             <label for="he_so">
                                 <i class="fas fa-percentage mr-1"></i>

@@ -26,7 +26,7 @@ echo getHeader("Quản lý Bằng cấp");
                 <tr>
                     <th>Mã bằng cấp</th>
                     <th>Tên bằng cấp</th>
-                    <th>Hệ số lương</th>
+
                     <th>Hệ số giảng dạy</th>
                     <th>Thao tác</th>
                 </tr>
@@ -36,7 +36,6 @@ echo getHeader("Quản lý Bằng cấp");
                     <tr>
                         <td><?= htmlspecialchars($bc['ma_bangcap']) ?></td>
                         <td><?= htmlspecialchars($bc['ten_bangcap']) ?></td>
-                        <td><?= number_format($bc['he_so_luong']) ?> VNĐ/giờ</td>
                         <td><?= number_format($bc['he_so'], 1) ?></td>
                         <td>
                             <a href="sua.php?id=<?= $bc['ma_bangcap'] ?>" class="btn btn-warning btn-sm">

@@ -70,29 +70,49 @@ foreach ($rows as $row) {
     $khoa = $row['ten_khoa'] ?: 'Khác';
     $mon = $row['ten_mon'];
 
-    // Tính tổng tiền dạy theo công thức thực tế
-    $sqlLuong = "SELECT 
-                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
-                FROM lich_day ld
-                JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
-                JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
-                JOIN bangcap bc ON gv.ma_bangcap = bc.ma_bangcap
-                WHERE ld.ma_mon = (SELECT ma_mon FROM mon_hoc WHERE ten_mon = :ten_mon LIMIT 1)
-                AND gv.ma_khoa = (SELECT ma_khoa FROM khoa WHERE ten_khoa = :ten_khoa LIMIT 1)";
-    $paramsLuong = [
-        ':ten_mon' => $mon,
-        ':ten_khoa' => $khoa
-    ];
-    if ($selectedType === 'nam') {
-        $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam";
-        $paramsLuong[':nam'] = $selectedYear;
-    } elseif ($selectedType === 'thang') {
-        $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam AND MONTH(ld.ngay_day) = :thang";
-        $paramsLuong[':nam'] = $selectedYear;
-        $paramsLuong[':thang'] = $selectedMonth;
-    } elseif ($selectedType === 'hocky' && $selectedHk) {
-        $sqlLuong .= " AND ld.ma_hk = :ma_hk";
-        $paramsLuong[':ma_hk'] = $selectedHk;
+    // Tính tổng tiền dạy theo công thức mới nếu lọc theo học kỳ
+    if ($selectedType === 'hocky' && $selectedHk) {
+        // Lấy lương học kỳ
+        $stmtLuongHK = $conn->prepare("SELECT luong_hocky FROM hoc_ky WHERE ma_hk = :ma_hk");
+        $stmtLuongHK->execute([':ma_hk' => $selectedHk]);
+        $luong_hocky = $stmtLuongHK->fetchColumn() ?: 0;
+
+        $sqlLuong = "SELECT 
+                        SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * :luong_hocky) as tong_luong
+                    FROM lich_day ld
+                    JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
+                    JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
+                    JOIN bangcap bc ON gv.ma_bangcap = bc.ma_bangcap
+                    WHERE ld.ma_mon = (SELECT ma_mon FROM mon_hoc WHERE ten_mon = :ten_mon LIMIT 1)
+                    AND gv.ma_khoa = (SELECT ma_khoa FROM khoa WHERE ten_khoa = :ten_khoa LIMIT 1)
+                    AND ld.ma_hk = :ma_hk";
+        $paramsLuong = [
+            ':ten_mon' => $mon,
+            ':ten_khoa' => $khoa,
+            ':ma_hk' => $selectedHk,
+            ':luong_hocky' => $luong_hocky
+        ];
+    } else {
+        $sqlLuong = "SELECT 
+                        SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
+                    FROM lich_day ld
+                    JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
+                    JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
+                    JOIN bangcap bc ON gv.ma_bangcap = bc.ma_bangcap
+                    WHERE ld.ma_mon = (SELECT ma_mon FROM mon_hoc WHERE ten_mon = :ten_mon LIMIT 1)
+                    AND gv.ma_khoa = (SELECT ma_khoa FROM khoa WHERE ten_khoa = :ten_khoa LIMIT 1)";
+        $paramsLuong = [
+            ':ten_mon' => $mon,
+            ':ten_khoa' => $khoa
+        ];
+        if ($selectedType === 'nam') {
+            $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam";
+            $paramsLuong[':nam'] = $selectedYear;
+        } elseif ($selectedType === 'thang') {
+            $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam AND MONTH(ld.ngay_day) = :thang";
+            $paramsLuong[':nam'] = $selectedYear;
+            $paramsLuong[':thang'] = $selectedMonth;
+        }
     }
     $stmtLuong = $conn->prepare($sqlLuong);
     $stmtLuong->execute($paramsLuong);

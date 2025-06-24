@@ -72,6 +72,7 @@ echo getHeader("Quản lý Kỳ học");
                         <th>Tên kỳ học</th>
                         <th>Năm học</th>
                         <th>Thời gian</th>
+                        <th>Lương học kỳ</th>
                         <th>Số lịch dạy</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
@@ -87,6 +88,7 @@ echo getHeader("Quản lý Kỳ học");
                                 <?= date('d/m/Y', strtotime($hk['ngay_bat_dau'])) ?> -
                                 <?= date('d/m/Y', strtotime($hk['ngay_ket_thuc'])) ?>
                             </td>
+                            <td class="text-right"><?= number_format($hk['luong_hocky'] ?? 0, 0, ',', '.') ?></td>
                             <td class="text-center"><?= $hk['so_lich_day'] ?></td>
                             <td>
                                 <?php

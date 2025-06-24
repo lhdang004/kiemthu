@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "UPDATE hoc_ky SET 
                 ten_hk = :ten_hk,
                 nam_hoc = :nam_hoc,
+                luong_hocky = :luong_hocky,
                 ngay_bat_dau = :ngay_bat_dau,
                 ngay_ket_thuc = :ngay_ket_thuc
                 WHERE ma_hk = :ma_hk";
@@ -40,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([
             ':ten_hk' => $_POST['ten_hk'],
             ':nam_hoc' => $_POST['nam_hoc'],
+            ':luong_hocky' => $_POST['luong_hocky'],
             ':ngay_bat_dau' => $_POST['ngay_bat_dau'],
             ':ngay_ket_thuc' => $_POST['ngay_ket_thuc'],
             ':ma_hk' => $id
@@ -142,6 +144,15 @@ echo getHeader("Sửa kỳ học");
                             <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control"
                                 value="<?= htmlspecialchars($hocky['ngay_ket_thuc']) ?>" required>
                             <div class="invalid-feedback">Vui lòng chọn ngày kết thúc</div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="luong_hocky">
+                                <i class="fas fa-stop mr-1"></i>
+                                Lương học kỳ <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" id="luong_hocky" name="luong_hocky" class="form-control"
+                                value="<?= htmlspecialchars($hocky['luong_hocky']) ?>" required>
+                            <div class="invalid-feedback">Vui lòng nhập lương học kỳ</div>
                         </div>
                     </div>
                     <div class="form-group col-md-6">

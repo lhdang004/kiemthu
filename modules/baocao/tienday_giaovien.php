@@ -36,6 +36,12 @@ if ($selectedType === 'nam') {
 
     $rows = [];
     foreach ($giaoviens as $teacherInfo) {
+        // Lấy lương học kỳ nếu có
+        $sqlLuongHK = "SELECT luong_hocky FROM hoc_ky WHERE nam_hoc = :nam_hoc ORDER BY ngay_bat_dau DESC LIMIT 1";
+        $stmtLuongHK = $conn->prepare($sqlLuongHK);
+        $stmtLuongHK->execute([':nam_hoc' => $selectedYear . '-' . ($selectedYear + 1)]);
+        $luong_hocky = $stmtLuongHK->fetchColumn() ?: 0;
+
         $sql2 = "SELECT 
                 mh.ten_mon,
                 ld.ten_lop_hoc,
@@ -47,7 +53,7 @@ if ($selectedType === 'nam') {
                     ld.so_tiet * 
                     (mh.he_so + ld.he_so_lop) * 
                     :he_so_gv * 
-                    bc.he_so_luong
+                    :luong_hocky
                 ) as luong_mon
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
@@ -61,7 +67,8 @@ if ($selectedType === 'nam') {
         $stmt2->execute([
             ':ma_gv' => $teacherInfo['ma_gv'],
             ':nam' => $selectedYear,
-            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0
+            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0,
+            ':luong_hocky' => $luong_hocky
         ]);
         $subjectDetails = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -95,6 +102,11 @@ if ($selectedType === 'nam') {
 
     $rows = [];
     foreach ($giaoviens as $teacherInfo) {
+        $sqlLuongHK = "SELECT luong_hocky FROM hoc_ky WHERE nam_hoc = :nam_hoc ORDER BY ngay_bat_dau DESC LIMIT 1";
+        $stmtLuongHK = $conn->prepare($sqlLuongHK);
+        $stmtLuongHK->execute([':nam_hoc' => $selectedYear . '-' . ($selectedYear + 1)]);
+        $luong_hocky = $stmtLuongHK->fetchColumn() ?: 0;
+
         $sql2 = "SELECT 
                 mh.ten_mon,
                 ld.ten_lop_hoc,
@@ -106,7 +118,7 @@ if ($selectedType === 'nam') {
                     ld.so_tiet * 
                     (mh.he_so + ld.he_so_lop) * 
                     :he_so_gv * 
-                    bc.he_so_luong
+                    :luong_hocky
                 ) as luong_mon
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
@@ -122,7 +134,8 @@ if ($selectedType === 'nam') {
             ':ma_gv' => $teacherInfo['ma_gv'],
             ':thang' => $selectedMonth,
             ':nam' => $selectedYear,
-            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0
+            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0,
+            ':luong_hocky' => $luong_hocky
         ]);
         $subjectDetails = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -156,7 +169,12 @@ if ($selectedType === 'nam') {
 
     $rows = [];
     foreach ($giaoviens as $teacherInfo) {
-        // Lấy chi tiết lương theo từng môn
+        // Lấy lương học kỳ theo mã học kỳ
+        $sqlLuongHK = "SELECT luong_hocky FROM hoc_ky WHERE ma_hk = :ma_hk";
+        $stmtLuongHK = $conn->prepare($sqlLuongHK);
+        $stmtLuongHK->execute([':ma_hk' => $selectedHk]);
+        $luong_hocky = $stmtLuongHK->fetchColumn() ?: 0;
+
         $sql2 = "SELECT 
                 mh.ten_mon,
                 ld.ten_lop_hoc,
@@ -168,7 +186,7 @@ if ($selectedType === 'nam') {
                     ld.so_tiet * 
                     (mh.he_so + ld.he_so_lop) * 
                     :he_so_gv * 
-                    bc.he_so_luong
+                    :luong_hocky
                 ) as luong_mon
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
@@ -182,7 +200,8 @@ if ($selectedType === 'nam') {
         $stmt2->execute([
             ':ma_gv' => $teacherInfo['ma_gv'],
             ':ma_hk' => $selectedHk,
-            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0
+            ':he_so_gv' => $teacherInfo['he_so_gv'] ?? 0,
+            ':luong_hocky' => $luong_hocky
         ]);
         $subjectDetails = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 

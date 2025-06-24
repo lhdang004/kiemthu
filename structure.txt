@@ -22,20 +22,12 @@ KiemThu/
 │   │   └── xoa.php
 │   ├── lichday/
 │   │   └── index.php
-│   ├── diemdanh/
-│   │   └── index.php
-│   ├── daybu/
-│   │   └── index.php
-│   ├── daythay/
-│   │   └── index.php
 │   ├── tinhluong/
 │   │   └── index.php
-│   ├── thanhtoan/
-│   │   └── index.php
 │   └── baocao/
-│       ├── gioday.php
-│       ├── taichinh.php
-│       └── thongke.php
+│       ├── giaovien.php
+│       ├── khoa.php
+│       └── truong.php
 ├── assets/
 │   ├── css/
 │   │   └── style.css

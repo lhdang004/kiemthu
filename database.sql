@@ -160,6 +160,7 @@ CREATE TABLE hoc_ky (
     ngay_bat_dau DATE NOT NULL,
     ngay_ket_thuc DATE NOT NULL, 
     nam_hoc VARCHAR(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+    luong_hocky DECIMAL(18,2) NOT NULL DEFAULT 0,
     trang_thai ENUM('Sắp diễn ra', 'Đang diễn ra', 'Đã kết thúc') DEFAULT 'Sắp diễn ra',
     UNIQUE KEY unique_semester_year (ten_hk, nam_hoc)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

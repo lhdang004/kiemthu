@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $ma_hk = taoMaHocKy($conn);
         // Bắt buộc điền đầy đủ các trường
-        $required = ['ten_hk', 'nam_hoc', 'ngay_bat_dau', 'ngay_ket_thuc'];
+        $required = ['ten_hk', 'nam_hoc', 'ngay_bat_dau', 'ngay_ket_thuc', 'luong_hocky'];
         foreach ($required as $field) {
             if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
                 throw new Exception("Vui lòng điền đầy đủ thông tin bắt buộc!");
@@ -51,8 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception("Lỗi: Trùng thời gian với học kỳ khác!");
         }
 
-        $sql = "INSERT INTO hoc_ky (ma_hk, ten_hk, nam_hoc, ngay_bat_dau, ngay_ket_thuc, trang_thai) 
-                VALUES (:ma_hk, :ten_hk, :nam_hoc, :ngay_bat_dau, :ngay_ket_thuc, 'Sắp diễn ra')";
+        // Kiểm tra lương học kỳ là số dương
+        if (!is_numeric($_POST['luong_hocky']) || floatval($_POST['luong_hocky']) < 0) {
+            throw new Exception("Lương học kỳ phải là số không âm!");
+        }
+
+        $sql = "INSERT INTO hoc_ky (ma_hk, ten_hk, nam_hoc, ngay_bat_dau, ngay_ket_thuc, luong_hocky, trang_thai) 
+                VALUES (:ma_hk, :ten_hk, :nam_hoc, :ngay_bat_dau, :ngay_ket_thuc, :luong_hocky, 'Sắp diễn ra')";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute([
@@ -60,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':ten_hk' => $_POST['ten_hk'],
             ':nam_hoc' => $_POST['nam_hoc'],
             ':ngay_bat_dau' => $_POST['ngay_bat_dau'],
-            ':ngay_ket_thuc' => $_POST['ngay_ket_thuc']
+            ':ngay_ket_thuc' => $_POST['ngay_ket_thuc'],
+            ':luong_hocky' => $_POST['luong_hocky']
         ]);
 
         header('Location: index.php?success=1');
@@ -126,6 +132,14 @@ echo getHeader("Thêm Kỳ học mới");
                     <div class="form-group">
                         <label>Ngày kết thúc</label>
                         <input type="date" name="ngay_ket_thuc" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Lương học kỳ</label>
+                        <input type="number" name="luong_hocky" class="form-control" min="0" step="any" required>
                     </div>
                 </div>
             </div>
