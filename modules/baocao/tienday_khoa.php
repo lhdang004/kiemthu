@@ -48,7 +48,7 @@ if ($selectedKhoa) {
         ($selectedType === 'hocky' && $selectedHk ? "AND lh2.ma_hk = :ma_hk" : "") .
         ") as tong_sv,
                 COUNT(DISTINCT lh.ma_lop) as tong_lop,
-                SUM(ld.so_tiet * IFNULL(bc.he_so_luong,0)) as tong_tien
+                SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_tien
             FROM lich_day ld
             JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
             LEFT JOIN khoa k ON gv.ma_khoa = k.ma_khoa
@@ -70,7 +70,7 @@ $dataTien = [];
 foreach ($rows as $row) {
     // Tính tổng tiền dạy theo công thức thực tế
     $sqlLuong = "SELECT 
-                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * 100000) as tong_luong
+                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
                 JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
@@ -244,9 +244,9 @@ echo getHeader($tieuDe);
                                     $ten_lop_arr = $stmtLop->fetchAll(PDO::FETCH_COLUMN);
                                     $ten_lop_str = implode(', ', $ten_lop_arr);
 
-                                    // Tính tổng tiền dạy theo công thức: SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * 100000)
+                                    // Tính tổng tiền dạy theo công thức: SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong)
                                     $sqlLuong = "SELECT 
-                                                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * 100000) as tong_luong
+                                                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
                                                 FROM lich_day ld
                                                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
                                                 JOIN giaovien gv ON ld.ma_gv = gv.ma_gv

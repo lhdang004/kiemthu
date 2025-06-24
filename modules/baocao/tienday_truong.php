@@ -72,7 +72,7 @@ foreach ($rows as $row) {
 
     // Tính tổng tiền dạy theo công thức thực tế
     $sqlLuong = "SELECT 
-                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * 100000) as tong_luong
+                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
                 JOIN giaovien gv ON ld.ma_gv = gv.ma_gv

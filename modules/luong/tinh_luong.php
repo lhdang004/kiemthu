@@ -38,10 +38,12 @@ if (isset($_POST['ma_gv']) && isset($_POST['ma_hk'])) {
                     ld.so_tiet * 
                     (mh.he_so + ld.he_so_lop) * 
                     :he_so_gv * 
-                    100000
+                    bc.he_so_luong
                 ) as luong_mon
                 FROM lich_day ld
                 JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
+                JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
+                JOIN bangcap bc ON gv.ma_bangcap = bc.ma_bangcap
                 WHERE ld.ma_gv = :ma_gv 
                 AND ld.ma_hk = :ma_hk
                 GROUP BY mh.ma_mon, ld.ten_lop_hoc
