@@ -75,9 +75,6 @@ echo getHeader("Thêm Bằng cấp");
                     <input type="text" name="ten_bangcap" id="ten_bangcap" class="form-control"
                         placeholder="VD: Cử nhân CNTT" required>
                 </div>
-
-
-
                 <div class="form-group col-md-6">
                     <label for="he_so"><i class="fas fa-calculator mr-1"></i> Hệ số giảng dạy</label>
                     <input type="number" name="he_so" id="he_so" class="form-control" min="1.0" max="3.0" step="0.1"

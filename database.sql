@@ -150,7 +150,7 @@ CREATE TABLE khoa (
 CREATE TABLE bangcap (
     ma_bangcap VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci PRIMARY KEY,
     ten_bangcap VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    he_so_luong DECIMAL(10,2) NOT NULL,
+    he_so_luong DECIMAL(10,2) ,
     he_so DECIMAL(3,1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -360,12 +360,12 @@ INSERT INTO khoa (ma_khoa, ten_khoa) VALUES
 ('K004', 'Cơ khí'),
 ('K005', 'Điện - Điện tử');
 
-INSERT INTO bangcap (ma_bangcap, ten_bangcap, he_so_luong, he_so) VALUES 
-('BC001', 'Giáo sư', 400000, 2.5),
-('BC002', 'Phó Giáo sư', 350000, 2.0),
-('BC003', 'Tiến sĩ', 300000, 1.7),
-('BC004', 'Thạc sĩ', 250000, 1.5),
-('BC005', 'Cử nhân', 200000, 1.3);
+INSERT INTO bangcap (ma_bangcap, ten_bangcap, he_so) VALUES 
+('BC001', 'Giáo sư',  2.5),
+('BC002', 'Phó Giáo sư', 2.0),
+('BC003', 'Tiến sĩ', 1.7),
+('BC004', 'Thạc sĩ', 1.5),
+('BC005', 'Cử nhân', 1.3);
 
 INSERT INTO giaovien (ma_gv, ho_ten, gioi_tinh, ngay_sinh, dia_chi, email, so_dien_thoai, ma_khoa, ma_bangcap, ngay_vao_lam) VALUES
 ('GV001', 'Lê Văn A', 'Nam', '2004-12-21', 'Bắc Ninh', 'teacher1@gmail.com', '0987654321', 'K001', 'BC001', '2025-05-25'),
