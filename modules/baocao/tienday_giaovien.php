@@ -28,7 +28,7 @@ $tieuDe = '';
 if ($selectedType === 'nam') {
     // Theo năm: tính chi tiết lương từng môn cho từng giáo viên trong năm
     $sqlGv = "SELECT 
-                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so_luong, bc.he_so as he_so_gv
+                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so as he_so_gv
             FROM giaovien g
             LEFT JOIN khoa k ON g.ma_khoa = k.ma_khoa
             LEFT JOIN bangcap bc ON g.ma_bangcap = bc.ma_bangcap";
@@ -82,7 +82,7 @@ if ($selectedType === 'nam') {
                 'ma_gv' => $teacherInfo['ma_gv'],
                 'ho_ten' => $teacherInfo['ho_ten'],
                 'ten_khoa' => $teacherInfo['ten_khoa'],
-                'he_so_luong' => $teacherInfo['he_so_luong'],
+                'luong_hocky' => $luong_hocky,
                 'he_so_gv' => $teacherInfo['he_so_gv'],
                 'chi_tiet_mon' => $subjectDetails,
                 'thuc_lanh' => $tongTien,
@@ -94,7 +94,7 @@ if ($selectedType === 'nam') {
 } elseif ($selectedType === 'thang') {
     // Theo tháng: tính chi tiết lương từng môn cho từng giáo viên trong tháng
     $sqlGv = "SELECT 
-                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so_luong, bc.he_so as he_so_gv
+                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so as he_so_gv
             FROM giaovien g
             LEFT JOIN khoa k ON g.ma_khoa = k.ma_khoa
             LEFT JOIN bangcap bc ON g.ma_bangcap = bc.ma_bangcap";
@@ -149,7 +149,7 @@ if ($selectedType === 'nam') {
                 'ma_gv' => $teacherInfo['ma_gv'],
                 'ho_ten' => $teacherInfo['ho_ten'],
                 'ten_khoa' => $teacherInfo['ten_khoa'],
-                'he_so_luong' => $teacherInfo['he_so_luong'],
+                'luong_hocky' => $luong_hocky,
                 'he_so_gv' => $teacherInfo['he_so_gv'],
                 'chi_tiet_mon' => $subjectDetails,
                 'thuc_lanh' => $tongTien,
@@ -161,7 +161,7 @@ if ($selectedType === 'nam') {
 } elseif ($selectedType === 'hocky' && $selectedHk) {
     // Theo học kỳ: lấy chi tiết lương từng môn cho từng giáo viên
     $sqlGv = "SELECT 
-                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so_luong, bc.he_so as he_so_gv
+                g.ma_gv, g.ho_ten, k.ten_khoa, bc.he_so as he_so_gv
             FROM giaovien g
             LEFT JOIN khoa k ON g.ma_khoa = k.ma_khoa
             LEFT JOIN bangcap bc ON g.ma_bangcap = bc.ma_bangcap";
@@ -215,7 +215,7 @@ if ($selectedType === 'nam') {
                 'ma_gv' => $teacherInfo['ma_gv'],
                 'ho_ten' => $teacherInfo['ho_ten'],
                 'ten_khoa' => $teacherInfo['ten_khoa'],
-                'he_so_luong' => $teacherInfo['he_so_luong'],
+                'luong_hocky' => $luong_hocky,
                 'he_so_gv' => $teacherInfo['he_so_gv'],
                 'chi_tiet_mon' => $subjectDetails,
                 'thuc_lanh' => $tongTien,
@@ -324,7 +324,9 @@ echo getHeader($tieuDe);
                                     <th>Họ tên</th>
                                     <th>Khoa</th>
                                     <th>Số tiết</th>
-                                    <th>Hệ số lương</th>
+                                    <?php if ($selectedType !== 'nam'): ?>
+                                        <th>lương Học kỳ</th>
+                                    <?php endif; ?>
                                     <th>Tiền dạy</th>
                                 </tr>
                             </thead>
@@ -333,16 +335,17 @@ echo getHeader($tieuDe);
                                 <?php foreach ($rows as $row):
                                     $tong_tien += $row['thuc_lanh']; ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($row['ma_gv']) ?></td>
-                                        <td><?= htmlspecialchars($row['ho_ten']) ?></td>
-                                        <td><?= htmlspecialchars($row['ten_khoa']) ?></td>
-                                        <td class="text-right"><?= htmlspecialchars($row['so_tiet']) ?></td>
-                                        <td class="text-right"><?= htmlspecialchars($row['he_so_luong']) ?></td>
-                                        <td class="text-right"><?= number_format($row['thuc_lanh'], 0, ',', '.') ?></td>
+                                        <td><?= htmlspecialchars($row['ma_gv'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['ho_ten'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['ten_khoa'] ?? '') ?></td>
+                                        <td class="text-right"><?= htmlspecialchars($row['so_tiet'] ?? '') ?></td>
+                                        <?php if ($selectedType !== 'nam'): ?>
+                                            <td class="text-right"><?= htmlspecialchars($row['luong_hocky'] ?? '') ?></td>
+                                        <?php endif; ?>
+                                        <td class="text-right"><?= number_format($row['thuc_lanh'] ?? 0, 0, ',', '.') ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
-
                         </table>
                     </div>
                 <?php else: ?>
