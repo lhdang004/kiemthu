@@ -239,7 +239,7 @@ echo getHeader($tieuDe);
                                             <td class="text-right"><?= htmlspecialchars($row['tong_gv']) ?></td>
                                             <td class="text-right"><?= htmlspecialchars($row['tong_sv']) ?></td>
                                             <td class="text-right"><?= htmlspecialchars($row['tong_lop']) ?></td>
-                                            <td class="text-right"><?= number_format($row['tong_tien'], 0, ',', '.') ?></td>
+                                            <td class="text-right"><?= number_format($row['tong_tien'] ?? 0, 0, ',', '.') ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -250,7 +250,7 @@ echo getHeader($tieuDe);
                                         <td class="text-right"><?= $sum_gv ?></td>
                                         <td class="text-right"><?= $sum_sv ?></td>
                                         <td class="text-right"><?= $sum_lop ?></td>
-                                        <td class="text-right"><?= number_format($sum_tien, 0, ',', '.') ?></td>
+                                        <td class="text-right"><?= number_format($sum_tien ?? 0, 0, ',', '.') ?></td>
                                     </tr>
                                 </tfoot>
                             </table>

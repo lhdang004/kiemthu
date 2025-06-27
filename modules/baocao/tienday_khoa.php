@@ -18,7 +18,7 @@ $selectedYear = isset($_GET['nam']) && in_array($_GET['nam'], $years) ? intval($
 $selectedMonth = isset($_GET['thang']) && in_array(intval($_GET['thang']), $months) ? intval($_GET['thang']) : date('n');
 $selectedHk = isset($_GET['ma_hk']) ? $_GET['ma_hk'] : '';
 
-$hockys = $conn->query("SELECT ma_hk, ten_hk, nam_hoc FROM hoc_ky ORDER BY nam_hoc DESC, ngay_bat_dau DESC")->fetchAll(PDO::FETCH_ASSOC);
+$hockys = $conn->query("SELECT ma_hk, ten_hk, luong_hocky, nam_hoc FROM hoc_ky ORDER BY nam_hoc DESC, ngay_bat_dau DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 $rows = [];
 $tieuDe = 'Báo cáo tiền dạy theo khoa';
@@ -231,65 +231,15 @@ echo getHeader($tieuDe);
                                 $sum_lop = 0;
                                 $sum_tien = 0;
                                 foreach ($rows as $row):
-                                    // Lấy danh sách tên lớp đã mở cho từng môn học
-                                    $paramsLop = [
-                                        ':ma_mon' => $row['ten_mon'],
-                                        ':ma_khoa' => $selectedKhoa
-                                    ];
-                                    $sqlLop = "SELECT DISTINCT lh.ten_lop 
-                                        FROM lop_hoc lh
-                                        JOIN mon_hoc mh ON lh.ma_mon = mh.ma_mon
-                                        JOIN giaovien gv ON mh.ma_khoa = gv.ma_khoa
-                                        WHERE mh.ten_mon = :ma_mon AND gv.ma_khoa = :ma_khoa";
-                                    if ($selectedType === 'nam') {
-                                        $sqlLop .= " AND YEAR((SELECT ngay_bat_dau FROM hoc_ky WHERE ma_hk = lh.ma_hk)) = :nam";
-                                        $paramsLop[':nam'] = $selectedYear;
-                                    } elseif ($selectedType === 'thang') {
-                                        $sqlLop .= " AND YEAR((SELECT ngay_bat_dau FROM hoc_ky WHERE ma_hk = lh.ma_hk)) = :nam AND MONTH((SELECT ngay_bat_dau FROM hoc_ky WHERE ma_hk = lh.ma_hk)) = :thang";
-                                        $paramsLop[':nam'] = $selectedYear;
-                                        $paramsLop[':thang'] = $selectedMonth;
-                                    } elseif ($selectedType === 'hocky' && $selectedHk) {
-                                        $sqlLop .= " AND lh.ma_hk = :ma_hk";
-                                        $paramsLop[':ma_hk'] = $selectedHk;
-                                    }
-                                    $stmtLop = $conn->prepare($sqlLop);
-                                    $stmtLop->execute($paramsLop);
-                                    $ten_lop_arr = $stmtLop->fetchAll(PDO::FETCH_COLUMN);
-                                    $ten_lop_str = implode(', ', $ten_lop_arr);
-
-                                    // Tính tổng tiền dạy theo công thức: SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong)
-                                    $sqlLuong = "SELECT 
-                                                    SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong) as tong_luong
-                                                FROM lich_day ld
-                                                JOIN mon_hoc mh ON ld.ma_mon = mh.ma_mon
-                                                JOIN giaovien gv ON ld.ma_gv = gv.ma_gv
-                                                JOIN bangcap bc ON gv.ma_bangcap = bc.ma_bangcap
-                                                WHERE ld.ma_mon = (SELECT ma_mon FROM mon_hoc WHERE ten_mon = :ten_mon LIMIT 1)
-                                                AND gv.ma_khoa = :ma_khoa";
-                                    $paramsLuong = [
-                                        ':ten_mon' => $row['ten_mon'],
-                                        ':ma_khoa' => $selectedKhoa
-                                    ];
-                                    if ($selectedType === 'nam') {
-                                        $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam";
-                                        $paramsLuong[':nam'] = $selectedYear;
-                                    } elseif ($selectedType === 'thang') {
-                                        $sqlLuong .= " AND YEAR(ld.ngay_day) = :nam AND MONTH(ld.ngay_day) = :thang";
-                                        $paramsLuong[':nam'] = $selectedYear;
-                                        $paramsLuong[':thang'] = $selectedMonth;
-                                    } elseif ($selectedType === 'hocky' && $selectedHk) {
-                                        $sqlLuong .= " AND ld.ma_hk = :ma_hk";
-                                        $paramsLuong[':ma_hk'] = $selectedHk;
-                                    }
-                                    $stmtLuong = $conn->prepare($sqlLuong);
-                                    $stmtLuong->execute($paramsLuong);
-                                    $tong_luong = $stmtLuong->fetchColumn();
-
                                     $sum_tiet += $row['tong_so_tiet'];
                                     $sum_gv += $row['tong_gv'];
                                     $sum_sv += $row['tong_sv'];
                                     $sum_lop += $row['tong_lop'];
-                                    $sum_tien += $tong_luong;
+                                    // Công thức tính tổng tiền dạy:
+                                    // Nếu lọc theo học kỳ: SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * luong_hocky)
+                                    // Nếu lọc theo tháng/năm: SUM(ld.so_tiet * (mh.he_so + ld.he_so_lop) * bc.he_so * bc.he_so_luong)
+                                    $tong_tien = is_numeric($row['tong_tien']) ? $row['tong_tien'] : 0;
+                                    $sum_tien += $tong_tien;
                                     ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['ten_mon']) ?></td>
@@ -297,7 +247,13 @@ echo getHeader($tieuDe);
                                         <td class="text-right"><?= htmlspecialchars($row['tong_gv']) ?></td>
                                         <td class="text-right"><?= htmlspecialchars($row['tong_sv']) ?></td>
                                         <td class="text-right"><?= htmlspecialchars($row['tong_lop']) ?></td>
-                                        <td class="text-right"><?= number_format($tong_luong, 0, ',', '.') ?></td>
+                                        <td class="text-right">
+                                            <?php if ($tong_tien > 0): ?>
+                                                <?= number_format($tong_tien, 0, ',', '.') ?>
+                                            <?php else: ?>
+                                                <span class="text-danger">0</span>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -308,7 +264,7 @@ echo getHeader($tieuDe);
                                     <td class="text-right"><?= $sum_gv ?></td>
                                     <td class="text-right"><?= $sum_sv ?></td>
                                     <td class="text-right"><?= $sum_lop ?></td>
-                                    <td class="text-right"><?= number_format($sum_tien, 0, ',', '.') ?></td>
+                                    <td class="text-right"><?= number_format($sum_tien ?? 0, 0, ',', '.') ?></td>
                                 </tr>
                             </tfoot>
                         </table>
